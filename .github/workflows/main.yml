@@ -1,0 +1,30 @@
+name: Titanic ML CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Verify Model Integrity
+      run: |
+        python -c "import joblib; model = joblib.load('titanic_model.pkl'); print('Model loaded successfully on GitHub runner!')"
+
+    - name: Build Docker Image
+      run: |
+        docker build -t titanic-api:latest .
